@@ -10,25 +10,17 @@ jobs:
       my_secret: ${{secrets.commit_secret}}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2.3.1
       - uses: subosito/flutter-action@v1
         with:
-          channel: 'dev'
+          flutter-version: '2.5.0'
+          channel: 'stable'
       - run: flutter config --enable-web
       - run: flutter pub get
       - run: flutter build web --release
-      - run: |
-          cd build/web
-          git init
-          # 改成你的提交邮箱
-          git config --global user.email 690934676@qq.com
-          # 改成你的提交用户名
-          git config --global user.name yangzhenyu
-          git status
-          # 更改此远程URL，例如查看您的远程URL是 git@github.com/FixedYangSir/flutter_web.git 然后改成以下内容
-          git remote add origin https://${{secrets.commit_secret}}@github.com/FixedYangSir/flutter_web.git
-          git checkout -b gh-pages
-          git add --all
-          git commit -m "update"
-          git push origin gh-pages -f
+      - uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          token: '${{ secrets.commit_secret }}'
+          branch: gh-pages
+          folder: build/web
 
